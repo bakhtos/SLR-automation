@@ -3,13 +3,11 @@ import os
 import tempfile
 from flask import Flask, render_template,send_file, send_from_directory, request, jsonify
 import datetime
-from agents import generate_research_questions_and_purpose_with_gpt, generate_abstract_with_openai, generate_summary_conclusion, generate_introduction_summary_with_openai
-import json
-from agents2 import generate_search_string_with_gpt
-from agents3 import fetch_papers, save_papers_to_csv, search_elsevier
-from agents4 import filter_papers_with_gpt_turbo, generate_response_gpt4_turbo
+from agent_summary import generate_abstract_with_openai, generate_summary_conclusion, generate_introduction_summary_with_openai
+from agent_slr import generate_search_string_with_gpt, generate_research_questions_and_purpose_with_gpt
+from agent_elsevier import fetch_papers, save_papers_to_csv, search_elsevier
+from agent_filter import filter_papers_with_gpt_turbo, generate_response_gpt4_turbo
 from flask_cors import CORS
-import requests
 from datetime import datetime
 
 load_dotenv()
