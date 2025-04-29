@@ -44,7 +44,6 @@ function App() {
             setSearchString(
                 message.search_string
                   .replace(/^\d+\.\s*/, '') // Remove any leading digits and dots
-                  .replace(/\bAND\b/g, 'OR') // Replace "AND" with "OR"
                   .replace(/[()]/g, '') // Remove parentheses
               );
             setLoading(false)
