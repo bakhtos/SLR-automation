@@ -66,11 +66,8 @@ def llm_research_questions(objective, num_questions):
             purpose = lines[i+1] if i+1 < len(lines) else "Purpose not provided"
             question_purpose_objects.append({"question": question, "purpose": purpose})
 
-        if num_questions == 1 and question_purpose_objects:
 
-            return {"research_questions": question_purpose_objects}
-        else:
-            return {"research_questions": question_purpose_objects}
+        return {"research_questions": question_purpose_objects}
     else:
         print(f"Error: {response.status_code}")
         print(response.text)
