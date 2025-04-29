@@ -1,24 +1,28 @@
 # agent4.py
 import requests
 import os
-api_key = os.getenv("API-KEY")
 import re
 
+from dotenv import load_dotenv
+load_dotenv()
+llm_base_url = os.getenv("LLM_BASE_URL")
+llm_model_id = os.getenv("LLM_MODEL_ID")
+
 def check_paper_relevance_and_keywords(title, search_string):
-    headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+    headers = {"Content-Type": "application/json"}
     # Adjust the prompt to ask for relevance and keywords
     prompt = (f"Determine if the paper titled '{title}' is relevant to the topic '{search_string}'. "
               "and in return just informed paper is relevant or paper is not relevant, to the point.")
 
     data = {
-        "model": "gpt-3.5-turbo",
+        "model": llm_model_id,
         "messages": [
             {"role": "system", "content": "You are a knowledgeable assistant."},
             {"role": "user", "content": prompt}
         ]
     }
 
-    response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=data)
+    response = requests.post(f"{llm_base_url}/v1/chat/completions", headers=headers, json=data)
     if response.status_code == 200:
         result = response.json()
         response_text = result['choices'][0]['message']['content'].strip().lower()
@@ -84,18 +88,17 @@ def generate_response_gpt4_turbo(question, papers_info):
     })
     
     headers = {
-        "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
     }
     
     data = {
-        "model": "gpt-4-turbo-preview",
+        "model": llm_model_id,
         "messages": messages,
         "temperature": 0.7,
         "max_tokens": 256
     }
     
-    response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=data, timeout=800)
+    response = requests.post(f"{llm_base_url}/v1/chat/completions", headers=headers, json=data, timeout=800)
     
     if response.status_code == 200:
         result = response.json()

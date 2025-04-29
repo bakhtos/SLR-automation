@@ -13,9 +13,7 @@ import requests
 from datetime import datetime
 
 load_dotenv()
-# x = datetime.datetime.now()
 
-key = os.getenv("ELSEVIER_API_KEY")
 
 app = Flask(__name__, static_folder='dist')
 CORS(app)

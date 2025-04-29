@@ -3,28 +3,30 @@ import requests
 import json
 from flask import jsonify
 import os
-key = os.getenv("API-KEY")
-api_key = key
 import re  # Import the regular expressions library
+
+from dotenv import load_dotenv
+load_dotenv()
+llm_base_url = os.getenv("LLM_BASE_URL")
+llm_model_id = os.getenv("LLM_MODEL_ID")
 
 def generate_research_questions_and_purpose_with_gpt(objective, num_questions):
    
     headers = {
-        "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json"
     }
     # Construct the prompt dynamically
     prompt_content = f"You are a helpful assistant capable of generating research questions along with their purposes for a systematic literature review.\n"
     prompt_content = f"Given the research objective: '{objective}', generate {num_questions} distinct research questions, each followed by its specific purpose. 'To examine', or 'To investigate'."
     data = {
-        "model": "gpt-3.5-turbo",
+        "model": llm_model_id,
         "messages": [
             {"role": "system", "content": "You are a helpful assistant capable of generating research questions along with their purposes for a systematic literature review."},
             {"role": "user", "content": prompt_content}
         ],
         "temperature": 0.7
     }
-    response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, data=json.dumps(data))
+    response = requests.post(f"{llm_base_url}/v1/chat/completions", headers=headers, data=json.dumps(data))
     if response.status_code == 200:
         result = response.json()
         messages = result['choices'][0]['message']['content']
@@ -52,7 +54,7 @@ def generate_research_questions_and_purpose_with_gpt(objective, num_questions):
 
 
 def generate_summary_conclusion(papers_info):
-    headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+    headers = {"Content-Type": "application/json"}
 
     prompt_parts = ["Summarize the conclusions of the following papers:"]
     for paper in papers_info:
@@ -63,7 +65,7 @@ def generate_summary_conclusion(papers_info):
     prompt = " ".join(prompt_parts)
 
     data = {
-        "model": "gpt-3.5-turbo",
+        "model": llm_model_id,
         "messages": [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": prompt},
@@ -71,7 +73,7 @@ def generate_summary_conclusion(papers_info):
     }
 
     response = requests.post(
-        "https://api.openai.com/v1/chat/completions",
+        f"{llm_base_url}/v1/chat/completions",
         headers=headers,
         data=json.dumps(data),
     )
@@ -91,18 +93,17 @@ def generate_abstract_with_openai(prompt):
     # Fetching the API key from environment variables for better security practice
 
     headers = {
-        "Authorization": f"Bearer {api_key}",  # Using the API key from environment variables
         "Content-Type": "application/json"
     }
     data = {
-        "model": "gpt-3.5-turbo",
+        "model": llm_model_id,
         "messages": [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": prompt}
         ]
     }
 
-    response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, data=json.dumps(data))
+    response = requests.post(f"{llm_base_url}/v1/chat/completions", headers=headers, data=json.dumps(data))
     if response.status_code == 200:
         result = response.json()
         content = result['choices'][0]['message']['content']
@@ -113,17 +114,16 @@ def generate_abstract_with_openai(prompt):
 
 def generate_introduction_summary_with_openai(prompt):
     headers = {
-        "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json"
     }
     data = {
-        "model": "gpt-3.5-turbo",
+        "model": llm_model_id,
         "messages": [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": prompt}
         ]
     }
-    response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, data=json.dumps(data))
+    response = requests.post(f"{llm_base_url}/v1/chat/completions", headers=headers, data=json.dumps(data))
     if response.status_code == 200:
         result = response.json()
         content = result['choices'][0]['message']['content']

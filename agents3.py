@@ -1,10 +1,11 @@
-from scholarly import scholarly
 import csv
 from scholarly import ProxyGenerator, scholarly
 import os
 import requests
 
-api_key = os.getenv('ELSEVIER_API_KEY')
+from dotenv import load_dotenv
+load_dotenv()
+elsevier_api_key = os.getenv('ELSEVIER_API_KEY')
 # Initialize a global variable to track if the proxy setup has been done
 proxy_setup_done = False
 
@@ -67,7 +68,7 @@ def search_elsevier(search_string, start_year, end_year, limit):
     
     url = "https://api.elsevier.com/content/search/scopus"
     headers = {
-        "X-ELS-APIKey": api_key,
+        "X-ELS-APIKey": elsevier_api_key,
         "Accept": "application/json"
     }
     
