@@ -4,7 +4,7 @@ import tempfile
 from flask import Flask, render_template,send_file, send_from_directory, request, jsonify
 import datetime
 from agent_summary import generate_abstract_with_openai, generate_summary_conclusion, generate_introduction_summary_with_openai
-from agent_slr import llm_search_string, generate_research_questions_and_purpose_with_gpt
+from agent_slr import llm_search_string, llm_research_questions
 from agent_elsevier import fetch_papers, save_papers_to_csv, search_elsevier
 from agent_filter import filter_papers_with_gpt_turbo, generate_response_gpt4_turbo
 from flask_cors import CORS
@@ -40,7 +40,7 @@ def generate_research_questions_and_purpose():
     if num_questions < 1:
         return jsonify({"error": "Number of questions must be at least 1"}), 400
 
-    questions_and_purposes = generate_research_questions_and_purpose_with_gpt(objective, num_questions)
+    questions_and_purposes = llm_research_questions(objective, num_questions)
     print(questions_and_purposes)
     return jsonify({"research_questions": questions_and_purposes})
 

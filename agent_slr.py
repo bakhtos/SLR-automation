@@ -1,6 +1,3 @@
-# agents2.py
-import re
-
 import requests
 import json
 import os
@@ -39,19 +36,20 @@ def llm_search_string(objective, research_questions):
         return "An error occurred while generating the search string."
 
 
-def generate_research_questions_and_purpose_with_gpt(objective, num_questions):
+def llm_research_questions(objective, num_questions):
 
     headers = {
         "Content-Type": "application/json"
     }
     # Construct the prompt dynamically
-    prompt_content = f"You are a helpful assistant capable of generating research questions along with their purposes for a systematic literature review.\n"
-    prompt_content = f"Given the research objective: '{objective}', generate {num_questions} distinct research questions, each followed by its specific purpose. 'To examine', or 'To investigate'."
+    user_prompt = f"Given the research objective: '{objective}', generate {num_questions} distinct research questions, each followed by its specific purpose."
     data = {
         "model": llm_model_id,
         "messages": [
-            {"role": "system", "content": "You are a helpful assistant capable of generating research questions along with their purposes for a systematic literature review."},
-            {"role": "user", "content": prompt_content}
+            {"role": "system", "content": "You are a helpful assistant capable of generating research questions along with their purposes for a systematic literature review."
+                                          "For X requested research questions, your output should contain 2X lines - a research question followed by the purpose."
+                                          "Do not start lines with 'Research question' or 'Purpose', output only the relevant text."},
+            {"role": "user", "content": user_prompt}
         ],
         "temperature": 0.7
     }
@@ -64,10 +62,8 @@ def generate_research_questions_and_purpose_with_gpt(objective, num_questions):
         question_purpose_objects = []
         for i in range(0, len(lines), 2):
             # Using regex to dynamically remove "Research question X:" where X is any number
-            question = re.sub(r"^Research question( \d+)?: ", "", lines[i], flags=re.IGNORECASE)
+            question = lines[i]
             purpose = lines[i+1] if i+1 < len(lines) else "Purpose not provided"
-            # Optionally, remove the prefix from purpose if needed
-            # purpose = purpose.replace("Purpose: ", "")
             question_purpose_objects.append({"question": question, "purpose": purpose})
 
         if num_questions == 1 and question_purpose_objects:
