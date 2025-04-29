@@ -19,12 +19,12 @@ def llm_search_string(objective, research_questions):
         "Content-Type": "application/json"
     }
     # Removed the explicit instruction for logical operators
-    combined_prompt = (f"Given the research objective: '{objective}', and the following research questions: {', '.join(research_questions)}, generate one concise search string for identifying relevant literature for literature review.")
+    user_prompt = (f"Given the research objective: '{objective}', and the following research questions: {', '.join(research_questions)}, generate one concise search string for identifying relevant literature for literature review.")
     data = {
         "model": llm_model_id,
         "messages": [
             {"role": "system", "content": "You are a helpful research assistant assisting with the literature reviews. Your aim to provide relevant search string based on the given research objectives and questions. Only the search string should be in the response"},
-            {"role": "user", "content": combined_prompt}
+            {"role": "user", "content": user_prompt}
         ],
         "temperature": 0.7
     }
